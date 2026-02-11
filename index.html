@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Muhammad Fatkhul Amin</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #e0a3ff;
+            --secondary: #ff69b4;
+            --accent: #00f3ff;
+            --bg-dark: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Background Effects --- */
+        .neural-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(123, 31, 162, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 243, 255, 0.1) 0%, transparent 40%),
+                #050505;
+        }
+
+        .neural-background::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* --- Glassmorphism UI --- */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        header {
+            position: fixed;
+            top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; width: 90%; max-width: 1100px;
+            padding: 12px 25px;
+            border-radius: 100px;
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header.scrolled {
+            top: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-color: var(--primary);
+            width: 80%;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px; font-weight: 700; color: var(--primary);
+            text-decoration: none; letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(224, 163, 255, 0.5);
+        }
+
+        .nav-links { display: flex; list-style: none; gap: 5px; }
+        .nav-links a { 
+            color: rgba(255,255,255,0.7); text-decoration: none; 
+            padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; 
+            transition: 0.3s; font-weight: 500;
+        }
+        .nav-links a:hover { color: var(--accent); background: rgba(0, 243, 255, 0.1); }
+
+        /* --- Hero Section --- */
+        .hero { 
+            min-height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; text-align: center;
+            padding: 120px 20px 60px;
+        }
+        
+        .hero-tag {
+            text-transform: uppercase; letter-spacing: 8px; font-size: 0.7rem;
+            color: var(--accent); margin-bottom: 20px; opacity: 0.8;
+        }
+
+        .hero h1 { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem); line-height: 1;
+            margin-bottom: 25px; font-weight: 800;
+            background: linear-gradient(to right, #fff, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Music Player Styles --- */
+        .music-player {
+            max-width: 400px;
+            margin: 0 auto 40px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        .play-btn:hover { transform: scale(1.1); }
+
+        .track-info { flex-grow: 1; }
+        .track-name { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 5px; }
+        .audio-visualizer { display: flex; gap: 3px; height: 15px; align-items: flex-end; }
+        .bar { width: 3px; background: var(--accent); border-radius: 5px; }
+        .playing .bar { animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 
+            0%, 100% { height: 5px; } 
+            50% { height: 15px; } 
+        }
+
+        /* --- Resume Info Section --- */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 40px auto;
+            text-align: left;
+        }
+
+        .info-card { padding: 30px; }
+        .info-card h3 { color: var(--accent); margin-bottom: 15px; font-family: 'Space Grotesk'; text-transform: uppercase; letter-spacing: 2px; font-size: 1rem; }
+        .info-card p { color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.9rem; margin-bottom: 10px; }
+        
+        .skill-bar-container { margin-bottom: 15px; }
+        .skill-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; }
+        .skill-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .skill-progress { height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+        .cta-button {
+            position: relative; overflow: hidden;
+            padding: 18px 45px; background: transparent;
+            color: #fff; text-decoration: none; border-radius: 50px; 
+            font-weight: 600; border: 1px solid var(--primary);
+            transition: 0.4s; display: inline-block;
+        }
+        .cta-button:hover {
+            background: var(--primary); color: #000;
+            box-shadow: 0 0 30px rgba(224, 163, 255, 0.4);
+        }
+
+        /* --- Section Container --- */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        /* --- Grid Container --- */
+        .hexagon-container { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; margin-top: 40px;
+        }
+
+        .video-card {
+            position: relative; height: 400px; transition: 0.5s ease;
+            cursor: pointer; overflow: hidden;
+        }
+
+        .video-card:hover { transform: translateY(-10px) scale(1.02); }
+        
+        .video-card video {
+            width: 100%; height: 100%; object-fit: cover;
+            border-radius: 24px; filter: grayscale(40%); transition: 0.5s;
+        }
+        
+        .video-card.active video { filter: grayscale(0%); border: 2px solid var(--accent); }
+
+        .video-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 30px; background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            border-radius: 0 0 24px 24px;
+            pointer-events: none;
+        }
+
+        /* --- Contact Form --- */
+        .contact-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+        
+        input, textarea { 
+            width: 100%; padding: 18px; background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--glass-border); border-radius: 15px; 
+            color: #fff; margin-bottom: 15px; outline: none; transition: 0.3s;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+        .submit-btn { 
+            width: 100%; padding: 18px; background: var(--accent); 
+            border: none; border-radius: 15px; cursor: pointer; 
+            font-weight: 800; color: #000; letter-spacing: 2px; transition: 0.3s;
+        }
+        .submit-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating-icon { animation: float 4s ease-in-out infinite; }
+
+        @media (max-width: 768px) {
+            .contact-container, .info-grid { grid-template-columns: 1fr; }
+            header { width: 95%; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3rem; }
+        }
+        @keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    50% { transform: translate(-1px, 2px) rotate(1deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.doomsday-active {
+    animation: shake 0.2s infinite !important;
+    filter: sepia(1) saturate(5) hue-rotate(-50deg) !important;
+}
+
+.fall-down {
+    transition: transform 2s cubic-bezier(0.47, 0, 0.745, 0.715), opacity 2s !important;
+    transform: translateY(1000px) rotate(45deg) !important;
+    opacity: 0 !important;
+    pointer-events: none;
+}
+    </style>
+</head>
+<body>
+    <div id="doomsday-panel" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <button id="doom-btn" class="glass" style="
+        padding: 10px 20px; 
+        color: #ff4d4d; 
+        border: 1px solid #ff4d4d; 
+        cursor: pointer;
+        font-family: 'Space Grotesk';
+        font-weight: bold;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+    ">LAUNCH DOOMSDAY</button>
+</div>
+
+<div id="doom-overlay" style="
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: radial-gradient(circle, rgba(255,0,0,0.2) 0%, rgba(0,0,0,0.9) 100%);
+    z-index: 9998;
+    display: none;
+    pointer-events: none;
+"></div>
+
+    <div class="neural-background"></div>
+
+    <header id="main-header" class="glass">
+        <nav>
+            <a href="#" class="logo">MFA.OS</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#showcase">Portfolio</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div style="color: var(--accent); font-size: 0.7rem; font-family: monospace;">STATUS: ONLINE</div>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="photo-container" style="margin-bottom: 30px; position: relative;">
+            <div class="photo-frame" style="
+                width: 150px; 
+                height: 200px; 
+                border-radius: 15px; 
+                border: 2px solid var(--accent); 
+                padding: 5px; 
+                background: var(--glass-bg);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+            ">
+                <img src="foto-anda.jpg" alt="Muhammad Fatkhul Amin" style="
+                    width: 100%; 
+                    height: 100%; 
+                    object-fit: cover; 
+                    border-radius: 10px;
+                    filter: contrast(1.1) brightness(1.1);
+                ">
+            </div>
+            <div style="
+                position: absolute; 
+                top: 0; left: 50%; 
+                transform: translateX(-50%); 
+                width: 160px; height: 2px; 
+                background: var(--accent); 
+                box-shadow: 0 0 15px var(--accent);
+                animation: scan 3s ease-in-out infinite;
+                z-index: 2;
+            "></div>
+        </div>
+
+        <div class="hero-tag">Creative Developer & Designer</div>
+        
+        <h1>MUHAMMAD<br>FATKHUL AMIN</h1>
+        
+        <p style="max-width: 600px; margin-bottom: 20px; color: rgba(255,255,255,0.6); font-weight: 300; line-height: 1.6;">
+            Professional <strong>Job Position</strong> with ID: 00.112.22.333. Specialized in creating visual identities and digital experiences with a focus on innovative results.
+        </p>
+
+        <div class="info-grid" id="about">
+            <div class="info-card glass">
+                <h3>PERSONAL DETAILS</h3>
+                <p><strong>Employee ID:</strong> 00.112.22.333</p>
+                <p><strong>Date of Birth:</strong> 02 / 06 / 2023</p>
+                <p><strong>Phone:</strong> (+00.123.456.789)</p>
+                
+                <h3 style="margin-top: 25px;">SKILLS & EXPERTISE</h3>
+                <div class="skill-bar-container">
+                    <div class="skill-label"><span>Web Desain</span><span>90%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 90%;"></div></div>
+                </div>
+                <div class="skill-bar-container">
+                    <div class="skill-label"><span>Desain Grafis</span><span>95%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 95%;"></div></div>
+                </div>
+            </div>
+
+            <div class="info-card glass">
+                <h3>TERMS & CONDITIONS</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">• Employees are required to use the card while on duty.</p>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">• If the card is lost or damaged, an additional fee will be charged according to regulations.</p>
+                <p style="font-size: 0.85rem;">• If you find this card, please contact the number listed on the profile.</p>
+                
+                <h3 style="margin-top: 25px;">VALIDITY</h3>
+                <p><strong>Issue Date:</strong> 31/10/23</p>
+                <p><strong>Expiry Date:</strong> 12/01/26</p>
+            </div>
+        </div>
+        
+        <a href="#showcase" class="cta-button">VIEW MY WORK</a>
+
+        <style>
+            @keyframes scan {
+                0%, 100% { top: 0; opacity: 0; }
+                50% { top: 100%; opacity: 1; }
+            }
+        </style>
+    </section>
+
+
+    <section id="showcase">
+    <div style="margin-bottom: 60px;">
+        <h2 style="font-family: 'Space Grotesk'; font-size: 2.5rem; letter-spacing: -1px;">PROJECT ARCHIVE</h2>
+        <div style="width: 50px; height: 4px; background: var(--accent); margin-top: 10px;"></div>
+    </div>
+
+    <div class="music-player glass" id="musicPlayer">
+        <button class="play-btn" id="playBtn">
+            <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="track-info">
+            <div class="track-name">AL NACER! · Sayfalse · Nulteex</div>
+            <div class="audio-visualizer">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+        <audio id="bgMusic" loop>
+            <source src="musik.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <div class="glass" style="padding: 60px 20px; text-align: center; border-style: dashed; border-width: 2px;">
+        <div style="margin-bottom: 30px;">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="floating-icon">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                <line x1="7" y1="2" x2="7" y2="22"></line>
+                <line x1="17" y1="2" x2="17" y2="22"></line>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <line x1="2" y1="7" x2="7" y2="7"></line>
+                <line x1="2" y1="17" x2="7" y2="17"></line>
+                <line x1="17" y1="17" x2="22" y2="17"></line>
+                <line x1="17" y1="7" x2="22" y2="7"></line>
+            </svg>
+        </div>
+        <h3 style="font-family: 'Space Grotesk'; margin-bottom: 15px; font-size: 1.8rem;">VIDEO SHOWREEL</h3>
+        <p style="color: rgba(255,255,255,0.6); max-width: 500px; margin: 0 auto 30px;">Klik tombol di bawah untuk melihat koleksi lengkap karya video dan motion design saya di halaman khusus.</p>
+        
+        <a href="portfolio-video.html" class="cta-button">BUKA GALERI VIDEO</a>
+    </div>
+</section>
+
+
+    <section id="contact" style="padding-bottom: 150px;">
+        <div class="contact-container">
+            <div>
+                <h2 style="font-size: 3rem; font-family: 'Space Grotesk'; margin-bottom: 20px;">LET'S<br><span style="color: var(--accent);">CONNECT</span></h2>
+                <p style="color: rgba(255,255,255,0.5); margin-bottom: 20px;">Tertarik untuk bekerja sama atau sekadar menyapa?</p>
+                <p style="color: var(--primary); font-family: monospace;">hello@reallygreatsite.com</p>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 10px;">123 Anywhere St., Any City</p>
+            </div>
+            <form class="glass" style="padding: 40px;" id="whatsappForm">
+                <input type="text" id="name" placeholder="NAMA ANDA" required>
+                <textarea id="message" placeholder="PESAN" rows="4" required></textarea>
+                <button type="submit" class="submit-btn">KIRIM PESAN</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // Music Player Logic
+        const music = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        const musicPlayer = document.getElementById('musicPlayer');
+
+        playBtn.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+                musicPlayer.classList.add('playing');
+                playIcon.innerHTML = '<rect x="6" y="4" width="4" height="16" fill="black"></rect><rect x="14" y="4" width="4" height="16" fill="black"></rect>';
+            } else {
+                music.pause();
+                musicPlayer.classList.remove('playing');
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z" fill="black"/>';
+            }
+        });
+
+        const vCards = document.querySelectorAll('.video-card');
+        const vElements = document.querySelectorAll('.portfolio-video');
+
+        vCards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                const video = vElements[index];
+                if (video.paused) {
+                    vElements.forEach((v, i) => {
+                        v.pause();
+                        vCards[i].classList.remove('active');
+                    });
+                    video.play();
+                    card.classList.add('active');
+                    // Matikan musik jika video dimainkan agar suara tidak tabrakan
+                    music.pause();
+                    musicPlayer.classList.remove('playing');
+                    playIcon.innerHTML = '<path d="M8 5v14l11-7z" fill="black"/>';
+                } else {
+                    video.pause();
+                    card.classList.remove('active');
+                }
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            header.classList.toggle('scrolled', window.scrollY > 100);
+        });
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            const size = Math.random() * 3;
+            particle.style.cssText = `
+                position: fixed;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${Math.random() > 0.5 ? '#00f3ff' : '#e0a3ff'};
+                left: ${Math.random() * 100}vw;
+                top: 110vh;
+                opacity: ${Math.random()};
+                z-index: -1;
+                pointer-events: none;
+                border-radius: 50%;
+            `;
+            document.body.appendChild(particle);
+
+            particle.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: `translateY(-110vh) translateX(${Math.random() * 100 - 50}px)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 4000 + 3000,
+                easing: 'linear'
+            }).onfinish = () => particle.remove();
+        }
+        setInterval(createParticle, 150);
+
+        document.getElementById('whatsappForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nama = document.getElementById('name').value;
+            const pesan = document.getElementById('message').value;
+            const nomorWA = "6281392463081";
+            const teksPesan = `Halo, saya ingin bertanya.%0A*Nama:* ${nama}%0A*Pesan:* ${pesan}`;
+            const urlWA = `https://wa.me/${nomorWA}?text=${teksPesan}`;
+            window.open(urlWA, '_blank');
+        });
+        const doomBtn = document.getElementById('doom-btn');
+const doomOverlay = document.getElementById('doom-overlay');
+const body = document.body;
+
+doomBtn.addEventListener('click', () => {
+    if (confirm("System override detected. Are you sure you want to initiate Doomsday Protocol?")) {
+        // 1. Aktifkan Overlay Merah & Guncangan
+        doomOverlay.style.display = 'block';
+        body.classList.add('doomsday-active');
+        doomBtn.innerText = "PROTOCOL INITIATED...";
+        doomBtn.style.background = "#ff4d4d";
+        doomBtn.style.color = "black";
+
+        // 2. Efek Suara (Opsional - Jika ada file suara ledakan)
+        // const explosion = new Audio('explosion.mp3'); 
+        // explosion.play();
+
+        // 3. Kehancuran Elemen secara bertahap
+        const elements = document.querySelectorAll('section, header, .info-card');
+        elements.forEach((el, index) => {
+            setTimeout(() => {
+                el.classList.add('fall-down');
+            }, index * 300); // Elemen jatuh satu per satu
+        });
+
+        // 4. Reset atau Pesan Terakhir
+        setTimeout(() => {
+            body.innerHTML = `
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:black; color:red; font-family:monospace;">
+                    <h1 style="font-size:3rem;">CONNECTION LOST</h1>
+                    <p>Muhammad Fatkhul Amin's portfolio has been purged.</p>
+                    <button onclick="location.reload()" style="margin-top:20px; padding:10px; cursor:pointer; background:none; border:1px solid red; color:red;">REBOOT SYSTEM</button>
+                </div>
+            `;
+            body.classList.remove('doomsday-active');
+        }, elements.length * 300 + 2000);
+    }
+});
+    </script>
+</body>
+</html>

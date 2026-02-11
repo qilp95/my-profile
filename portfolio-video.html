@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Gallery | MFA.OS</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #e0a3ff;
+            --secondary: #ff69b4;
+            --accent: #00f3ff;
+            --bg-dark: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background Dinamis (Sama dengan Index) */
+        .neural-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(123, 31, 162, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 243, 255, 0.1) 0%, transparent 40%),
+                #050505;
+        }
+
+        .neural-background::after {
+            content: "";
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent);
+            text-decoration: none;
+            font-family: 'Space Grotesk';
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            margin-bottom: 40px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .back-nav:hover {
+            background: rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        h1 {
+            font-family: 'Space Grotesk';
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        /* Video Grid */
+        .hexagon-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 30px; 
+        }
+
+        .video-card {
+            position: relative; 
+            height: 450px; 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; 
+            overflow: hidden;
+        }
+
+        .video-card:hover { 
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .video-card video {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(30%) brightness(0.8); transition: 0.5s;
+        }
+        
+        .video-card.active video, .video-card:hover video { 
+            filter: grayscale(0%) brightness(1); 
+        }
+
+        .video-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 30px; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            pointer-events: none;
+        }
+
+        .tag {
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .hexagon-container { grid-template-columns: 1fr; }
+            .video-card { height: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="neural-background"></div>
+
+    <section>
+        <a href="index.html" class="back-nav">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            BACK TO HOME
+        </a>
+
+        <header>
+            <h1>VIDEO PORTFOLIO</h1>
+            <p class="subtitle">Motion graphics, brand identity, and cinematic storytelling.</p>
+        </header>
+        
+        <div class="hexagon-container">
+            <div class="video-card glass">
+                <video loop playsinline class="portfolio-video">
+                    <source src="video1.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay">
+                    <span class="tag">Digital Experience</span>
+                    <h3 style="font-family: 'Space Grotesk';">E-Commerce Cyber</h3>
+                </div>
+            </div>
+
+            <div class="video-card glass">
+                <video loop playsinline class="portfolio-video">
+                    <source src="video2.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay">
+                    <span class="tag">Interface Design</span>
+                    <h3 style="font-family: 'Space Grotesk';">Neural Dashboard</h3>
+                </div>
+            </div>
+
+            <div class="video-card glass">
+                <video loop playsinline class="portfolio-video">
+                    <source src="video3.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay">
+                    <span class="tag">3D Motion</span>
+                    <h3 style="font-family: 'Space Grotesk';">Global Matrix 3D</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const vCards = document.querySelectorAll('.video-card');
+        const vElements = document.querySelectorAll('.portfolio-video');
+
+        vCards.forEach((card, index) => {
+            card.addEventListener('click', () => {
+                const video = vElements[index];
+                if (video.paused) {
+                    // Berhentikan video lain yang sedang jalan
+                    vElements.forEach((v, i) => {
+                        v.pause();
+                        vCards[i].classList.remove('active');
+                    });
+                    video.play();
+                    card.classList.add('active');
+                } else {
+                    video.pause();
+                    card.classList.remove('active');
+                }
+            });
+        });
+
+        // Efek Parallax sederhana untuk background
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            document.querySelector('.neural-background').style.transform = 
+                `translate(${x * 20}px, ${y * 20}px)`;
+        });
+    </script>
+</body>
+</html>
